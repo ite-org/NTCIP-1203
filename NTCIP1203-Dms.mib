@@ -1,9 +1,48 @@
-
--- Section 1
--- Section 2
--- Section 3
--- Section 4
--- Section 5 Management Information Base (MIB) [Normative]
+-- Copyright 1998-2024 by the American Association of State Highway and
+-- Transportation Officials (AASHTO), the Institute of Transportation
+-- Engineers (ITE), and the National Electrical Manufacturers Association
+-- (NEMA). All intellectual property rights, including, but not limited to,
+-- the rights of reproduction in whole or in part in any form, translation
+-- into other languages and display are reserved by the copyright owners
+-- under the laws of the United States of America, the Universal Copyright
+-- Convention, the Berne Convention, and the International and Pan American
+-- Copyright Conventions.
+-- 
+-- Joint NEMA, AASHTO, and ITE
+-- NTCIP Management Information Base
+-- DISTRIBUTION NOTICE
+--
+-- To the extent and in the limited event these materials are distributed by
+-- AASHTO/ITE/NEMA in the form of a Management Information Base ("MIB"),
+-- AASHTO/ITE/NEMA extends the following permissions:
+--
+-- You may make and distribute unlimited copies of this file, including
+-- copies for commercial distribution, provided that:
+--   (a) the copies are not edited from this official version and
+--   (b) each copy contains this Notice
+--
+-- These materials are delivered "AS IS" without any warranties as to their
+-- use or performance.
+--
+-- AASHTO/ITE/NEMA AND THEIR SUPPLIERS DO NOT WARRANT THE PERFORMANCE OR
+-- RESULTS YOU MAY OBTAIN BY USING THESE MATERIALS. AASHTO/ITE/NEMA AND THEIR
+-- SUPPLIERS MAKE NO WARRANTIES, EXPRESS OR IMPLIED, AS TO NONINFRINGEMENT OF
+-- THIRD PARTY RIGHTS, MERCHANTABILITY, OR FITNESS FOR ANY PARTICULAR PURPOSE.
+-- IN NO EVENT WILL AASHTO, ITE OR NEMA OR THEIR SUPPLIERS BE LIABLE TO YOU OR
+-- ANY THIRD PARTY FOR ANY CLAIM OR FOR ANY CONSEQUENTIAL, INCIDENTAL OR
+-- SPECIAL DAMAGES, INCLUDING ANY LOST PROFITS OR LOST SAVINGS, ARISING FROM
+-- YOUR REPRODUCTION OR USE OF THESE MATERIALS, EVEN IF AN AASHTO, ITE, OR
+-- NEMA REPRESENTATIVE HAS BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+-- Some states or jurisdictions do not allow the exclusion or limitation of
+-- incidental, consequential or special damages, or the exclusion of implied
+-- warranties, so the above limitations may not apply to you.
+--
+-- Use of these materials does not constitute an endorsement or affiliation by
+-- or between AASHTO, ITE, or NEMA and you, your company, or your products and
+-- services.
+--
+-- NTCIP is a trademark of AASHTO/ITE/NEMA.
+--
 -- 5.1	Object Definitions
 NTCIP1203-Dms DEFINITIONS ::= BEGIN
 IMPORTS
@@ -80,7 +119,7 @@ MessageIDCode ::= TEXTUAL-CONVENTION
     containing the OER-encoding of the following ASN.1 structure:
       MessageIDCodeStructure ::= SEQUENCE 
       {
-      messageMemoryType  INTEGER (0..255),
+      messageMemoryType INTEGER (0..255),
       messageNumber      INTEGER (0..65535),
       messageCRC         OCTET STRING (SIZE (2))
       }
@@ -3928,7 +3967,7 @@ universal fdWatchdogFailures object.
 
 -- 5.11.1.6	Open Door Status Parameter 
 dmsStatDoorOpen  OBJECT-TYPE 
-SYNTAX      Integer32 (0..255) 
+SYNTAX      INTEGER (0..255) 
 MAX-ACCESS  read-only 
 STATUS      deprecated  
 DESCRIPTION  
@@ -6637,9 +6676,9 @@ to define the graphic. A set to this object shall cause the dmsGraphicStatus
 to transition to processingGraphicFile and the associated logic of clause 
 4.3.2.3 to apply. A set of this object in the same request as a request to 
 set dmsGraphicHeight, dmsGraphicWidth, dmsGraphicType, dmsGraphicID, 
-dmsGraphicTransparencyEnabled, dmsGraphicTransparencyColor, dmsGraphicHeightV4, or 
-dmsGraphicBlockBitmap for the same dmsGrahaphic shall result in an 
-inconsistentValue error.
+dmsGraphicTransparencyEnabled, dmsGraphicTransparencyColor, 
+dmsGraphicHeightV4, or dmsGraphicBlockBitmap for the same dmsGrahaphic shall 
+result in an inconsistentValue error.
 
 At the present time, only png files are allowed and an attempt to set this 
 object to a value with an extension other than '.png' (or no extension) shall 
@@ -6672,8 +6711,8 @@ defining the graphic image can be constructed in the following manner:
 Concatenate the rows of the dmsGraphicBitmapTable with the matching 
 dmsGraphicIndex, in order of the dmsGraphicBlockNumber value, until the 
 resultant OCTET STRING is large enough to contain the entire image as defined 
-by the dmsGraphicHeightV4 and dmsGraphicWidth values for the dmsGraphicIndex in 
-question.
+by the dmsGraphicHeightV4 and dmsGraphicWidth values for the dmsGraphicIndex 
+in question.
 
 The format of a complete bitmap is described here:
 A complete bitmap image is defined by the rows in dmsGraphicBitmapTable that 
@@ -6947,6 +6986,27 @@ dmsGraphicStatus to 'readyForUseReq'.
 <Object Identifier> 1.3.6.1.4.1.1206.4.2.3.10.11"
 ::= { graphicDefinition 11 }
 
+-- 5.12.12	Graphic Path Parameter 
+dmsGraphicPath  OBJECT-TYPE 
+SYNTAX      SnmpAdminString
+MAX-ACCESS  read-only 
+STATUS      current  
+DESCRIPTION  
+" <Definition> Indicates the absolute path for storing graphic files, 
+including the trailing slash. The path may use symbolic links (symlinks). 
+<Informative> It is recommended that the graphic path 1) should only be used 
+for storing user-defined graphic files, 2) should not reveal sensitive 
+directory structures, and 3) should be presented in Unix directory format. 
+For example, due to the use of off-the-shelf software, there might be 
+advantages to storing the graphics in '/application/uploads/graphics'. 
+However, to avoid revealing the presence of the 'application' directory, 
+which may contain sensitive files, a symlink could be created to equate the 
+'user' directory with '/application/uploads/'; the value of this object would 
+then be '/user/graphics'.
+<Parameter Type> Status
+<Object Identifier> 1.3.6.1.4.1.1206.4.2.3.10.12"
+::= { graphicDefinition 12 }
+
 -- 5.13	Callable Commands
 dmsCallable  OBJECT-IDENTITY 
 STATUS  current
@@ -7128,8 +7188,7 @@ DESCRIPTION
 
 -- 5.14.2	VMS Core Group
 vmsCoreGroupV4 OBJECT-GROUP
-OBJECTS { dmsBeaconType,
-          monochromeColor,
+OBJECTS { monochromeColor,
           defaultFlashOn,
           defaultFlashOnActivate,
           defaultFlashOff,
@@ -7303,9 +7362,10 @@ OBJECTS { dmsGraphicMaxEntries,
           dmsGraphicBitmapIndex,
           dmsGraphicBlockNumber,
           dmsGraphicBlockBitmap,
-          dmsAvailableGraphicMemoryV4,
+          dmsAvailableGraphicMemoryV4 ,
           dmsGraphicFileErrorDescr,
-          dmsGraphicErrorDescr }
+          dmsGraphicErrorDescr,
+          dmsGraphicPath }
 STATUS  current
 DESCRIPTION
 "<Definition> The set of DMS objects required to support graphics.
@@ -7348,9 +7408,7 @@ illumination.
 
 -- 5.14.13	Automatic Brightness Group
 dmsAutoBrightGroupV4 OBJECT-GROUP
-OBJECTS { dmsIllumMaxPhotocellLevel,
-          dmsIllumPhotocellLevelStatus,
-          dmsIllumBrightnessValues,
+OBJECTS { dmsIllumBrightnessValues,
           dmsIllumBrightnessValuesError }
 STATUS  current
 DESCRIPTION
@@ -7480,5 +7538,4 @@ DESCRIPTION
 displayed at the end of the previously displayed message's duration.
 <Object Identifier> 1.3.6.1.4.1.1206.4.2.3.127.2.24"
 ::= { dmsGroups 24 }
-
 END
